@@ -25,8 +25,9 @@ and verify incoming tokens. We set the accessTokenEndpointPath to "access-token"
 supportedGrantTypes to "RESOURCE_OWNER_PASSWORD_CREDENTIALS" thus obliging the resource owner and client to provide the username 
 and password, grantType=password and the required scopes when requesting a token, like so:
 
+```bash
 	curl "http://localhost:9999/access-token?grant_type=passwordarbey&password=hello123&scope=READ%20WRITE"
-
+```
 which will give a response like:
 
 ```json
