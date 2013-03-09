@@ -38,12 +38,6 @@ http://www.mulesoft.org/schema/mule/test http://www.mulesoft.org/schema/mule/tes
 		name="Secure_Property_Placeholder" key="${properties.key}" location="config.${env}.properties"
 		doc:name="Secure Property Placeholder" />
 
-	<signature:config name="Signature" enableLanguage="true"
-		doc:name="Signature">
-		<signature:jce-signer-config algorithm="HmacMD5"
-			key="JLfl5sER3kt4oVkzP2d39UQrUxrEK63LjmXAO45b6cU=" />
-	</signature:config>
-
 	<spring:beans>
 		<ss:authentication-manager
 			id="inMemoryResourceOwnerAuthenticationManager" alias="inMemoryAuthManager">

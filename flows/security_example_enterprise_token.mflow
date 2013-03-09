@@ -10,21 +10,7 @@
             <property value="1" name="auxiliary;index"/>
         </properties>
     </global-element>
-    <global-element type="http://www.mulesoft.org/schema/mule/signature/config" name="Signature" entity-id="Signature#1">
-        <properties>
-            <property value="true" name="enableLanguage"/>
-            <property value="Signature" name="name"/>
-            <property name="defaultSigner"/>
-            <property value="2" name="auxiliary;index"/>
-            <property-collection name="@http://www.mulesoft.org/schema/mule/signature/jce-signer-config;0">
-                <property value="JLfl5sER3kt4oVkzP2d39UQrUxrEK63LjmXAO45b6cU=" name="key"/>
-                <property value="3" name="auxiliary;index"/>
-                <property value="3" name="auxiliary;wrapIn"/>
-                <property value="HmacMD5" name="algorithm"/>
-            </property-collection>
-        </properties>
-    </global-element>
-    <global-unknown index="5" parentIndex="4" description="false" wrapNSURL="http://www.springframework.org/schema/beans" wrapNSPref="spring" wrapIn="beans" entity-id="global-unknown#1">
+    <global-unknown index="3" parentIndex="2" description="false" wrapNSURL="http://www.springframework.org/schema/beans" wrapNSPref="spring" wrapIn="beans" entity-id="global-unknown#1">
         <content>&lt;ss:authentication-manager xmlns:ss=&quot;http://www.springframework.org/schema/security&quot; id=&quot;inMemoryResourceOwnerAuthenticationManager&quot; alias=&quot;inMemoryAuthManager&quot;&gt;
 			&lt;ss:authentication-provider&gt;
 				&lt;ss:user-service id=&quot;resourceOwnerUserService&quot;&gt;
@@ -33,7 +19,7 @@
 			&lt;/ss:authentication-provider&gt;
 		&lt;/ss:authentication-manager&gt;</content>
     </global-unknown>
-    <global-unknown index="9" description="false" entity-id="global-unknown#2">
+    <global-unknown index="7" description="false" entity-id="global-unknown#2">
         <content>&lt;mule-ss:security-manager xmlns:mule-ss=&quot;http://www.mulesoft.org/schema/mule/spring-security&quot;&gt;
 		&lt;mule-ss:delegate-security-provider name=&quot;demos-security-provider&quot; delegate-ref=&quot;inMemoryResourceOwnerAuthenticationManager&quot;/&gt;
 	&lt;/mule-ss:security-manager&gt;</content>
@@ -61,7 +47,7 @@
             <property name="dynamicNotification"/>
             <property name="sendBufferSize"/>
             <property name="proxyPassword"/>
-            <property value="11" name="auxiliary;index"/>
+            <property value="9" name="auxiliary;index"/>
         </properties>
     </global-element>
     <global-element type="http://www.mulesoft.org/schema/mule/oauth2-provider/config" name="OAuth provider module" entity-id="OAuth provider module#1">
@@ -84,26 +70,26 @@
             <property value="oauth2-provider" name="name"/>
             <property name="clientStore-ref"/>
             <property name="authorizationTtlSeconds"/>
-            <property value="12" name="auxiliary;index"/>
+            <property value="10" name="auxiliary;index"/>
             <property value="http-connector" name="connector-ref"/>
             <property-collection name="@http://www.mulesoft.org/schema/mule/oauth2-provider/configurable-clientss;0">
-                <property value="13" name="auxiliary;index"/>
-                <property value="13" name="auxiliary;wrapIn"/>
+                <property value="11" name="auxiliary;index"/>
+                <property value="11" name="auxiliary;wrapIn"/>
                 <property-collection name="@http://www.mulesoft.org/schema/mule/oauth2-provider/configurable-clients;1">
                     <property value="&#xA;&#x9;&#x9;&#x9;&#x9;&#xA;&#x9;&#x9;&#x9;&#x9;&#xA;&#x9;&#x9;&#x9;" name="value"/>
-                    <property value="14" name="auxiliary;index"/>
-                    <property value="14" name="auxiliary;wrapIn"/>
+                    <property value="12" name="auxiliary;index"/>
+                    <property value="12" name="auxiliary;wrapIn"/>
                 </property-collection>
             </property-collection>
         </properties>
     </global-element>
-    <flow SubFlow="false" name="server" entity-id="63f04a4c-8d7b-41cb-ad01-b5bf2a2ecd58">
+    <flow SubFlow="false" name="server" entity-id="00ddfa9e-f311-4447-a02e-0a0dd08b0d72">
         <properties>
             <property name="processingStrategy"/>
             <property name="processingStrategy2"/>
             <property name="bussinessEventsLabel"/>
             <property name="tracking:enable-default-events"/>
-            <property value="20" name="auxiliary;index"/>
+            <property value="18" name="auxiliary;index"/>
         </properties>
         <lane isChoiceOtherwiseLane="false" index="0" hadOnlyOneElement="false" entity-id="compartment-lane#1">
             <graphicalData height="0" width="0" y="0" x="0"/>
@@ -132,7 +118,7 @@
                     <property name="user"/>
                     <property name="responseTimeout"/>
                     <property name="mimeType"/>
-                    <property value="21" name="auxiliary;index"/>
+                    <property value="19" name="auxiliary;index"/>
                     <property value="http-connector" name="connector-ref"/>
                 </properties>
             </endpoint>
@@ -142,7 +128,7 @@
                     <property value="welcome!" name="message"/>
                     <property name="category"/>
                     <property value="INFO" name="level"/>
-                    <property value="26" name="auxiliary;index"/>
+                    <property value="24" name="auxiliary;index"/>
                 </properties>
             </pattern>
         </lane>
