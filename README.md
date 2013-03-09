@@ -10,7 +10,8 @@ editor. The private key used to encrypt the property must be the same as that su
 given the key 1234567890123456 we refer to the key as ${properties.key} and pass it at server startup as a JVM property -Dproperties.key=1234567890123456
 
 ```xml
-<secure-property-placeholder:config name="Secure_Property_Placeholder" key="${properties.key}" location="config.${env}.properties" doc:name="Secure Property Placeholder" />
+<secure-property-placeholder:config name="Secure_Property_Placeholder" key="${properties.key}" 
+	location="config.${env}.properties" doc:name="Secure Property Placeholder" />
 ```
 
 Secure Token Service
@@ -28,12 +29,14 @@ and verify incoming tokens. As we interact with it, we of course are the Resourc
 In our requests we provide the username and password, grantType=password and the required scopes when requesting a token, like so:
 
 ```bash
-curl http://localhost:9999/access-token?grant_type=password&client_id=demos-client&username=nialdarbey&password=hello123&scope=READ%20WRITE
+curl http://localhost:9999/access-token?grant_type=password&client_id=demos-client
+	&username=nialdarbey&password=hello123&scope=READ%20WRITE
 ```
 which will give a response like:
 
 ```json
-{"scope":"READ WRITE","expires_in":86400,"token_type":"bearer","access_token":"l8bFMEC9PA7NcpmHeTYS43Wl96_Y6LuIOhGci2zMJf0Qso9llgRLkgQjarMzUhvQz8vGVHmazrZ2C-Gjo20khg"}
+{"scope":"READ WRITE","expires_in":86400,"token_type":"bearer",
+	"access_token":"l8bFMEC9PA7NcpmHeTYS43Wl96_Y6LuIOhGci2zMJf0Qso9llgRLkgQjarMzUhvQz8vGVHmazrZ2C-Gjo20khg"}
 ```
 
 The configuration of the Authorization Provider follows. Note that the provider scopes are specific to the application and we set the accessTokenEndpointPath to "access-token", the provider-authorized-grant-type to PASSWORD and the 
@@ -63,12 +66,14 @@ supportedGrantTypes to "RESOURCE_OWNER_PASSWORD_CREDENTIALS":
 Having the token in hand, the client can then request access to the service like so:
 
 ```bash
-curl -vv http://localhost:9999/api/demos?access_token=l8bFMEC9PA7NcpmHeTYS43Wl96_Y6LuIOhGci2zMJf0Qso9llgRLkgQjarMzUhvQz8vGVHmazrZ2C-Gjo20khg
+curl -vv http://localhost:9999/api/demos
+	?access_token=l8bFMEC9PA7NcpmHeTYS43Wl96_Y6LuIOhGci2zMJf0Qso9llgRLkgQjarMzUhvQz8vGVHmazrZ2C-Gjo20khg
 ```
 The token is checked by the validate action of the oauth2-provider.
 
 ```xml
-<http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="9999" path="api" connector-ref="http-connector" doc:name="/api">
+<http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="9999" 
+	path="api" connector-ref="http-connector" doc:name="/api">
     <not-filter> 
         <wildcard-filter pattern="/favicon.ico"/> 
     </not-filter>
