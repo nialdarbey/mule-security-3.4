@@ -63,7 +63,7 @@
             <property name="enableRefreshToken"/>
             <property name="loginPage"/>
             <property value="RESOURCE_OWNER_PASSWORD_CREDENTIALS" name="supportedGrantTypes"/>
-            <property name="tokenTtlSeconds"/>
+            <property value="30" name="tokenTtlSeconds"/>
             <property value="READ WRITE" name="scopes"/>
             <property name="tokenStore-ref"/>
             <property value="Pre-sales Demos" name="providerName"/>
@@ -83,7 +83,7 @@
             </property-collection>
         </properties>
     </global-element>
-    <flow SubFlow="false" name="server" entity-id="c141a33a-3cb7-4048-bfb3-018dce69fa12">
+    <flow SubFlow="false" name="server" entity-id="210ef3c9-f9bc-4cf8-afc5-039b6aa7a0e4">
         <properties>
             <property name="processingStrategy"/>
             <property name="processingStrategy2"/>

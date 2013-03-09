@@ -6,12 +6,15 @@ Secure Property Placeholder
 =========================== 
 Just like the normal property placeholder which resolves ${property.name} occurrences against the
 named properties file on the classpath with the added benefit that any of the said properties could have been encrypted by Studio's secure property 
-editor. The private key used to encrypt the property must be the same as that supplied to mule upon server startup. So, in this example, 
-given the key 1234567890123456 we refer to the key as ${properties.key} and pass it at server startup as a JVM property -Dproperties.key=1234567890123456
-
+editor. 
 ```xml
 <secure-property-placeholder:config name="Secure_Property_Placeholder" key="${properties.key}" 
 	location="config.${env}.properties" doc:name="Secure Property Placeholder" />
+```
+The private key used to encrypt the property must be the same as that supplied to mule upon server startup. So, in this example, 
+given the key 1234567890123456 we refer to the key as ${properties.key} and pass it at server startup as a JVM argument
+```bash
+	$MULE_HOME/bin/mule -Dproperties.key=1234567890123456
 ```
 
 Secure Token Service

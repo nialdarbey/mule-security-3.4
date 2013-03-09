@@ -63,7 +63,7 @@ http://www.mulesoft.org/schema/mule/test http://www.mulesoft.org/schema/mule/tes
 		providerName="Pre-sales Demos" resourceOwnerSecurityProvider-ref="demos-security-provider"
 		scopes="READ WRITE" connector-ref="http-connector"
 		supportedGrantTypes="RESOURCE_OWNER_PASSWORD_CREDENTIALS"
-		accessTokenEndpointPath="token" doc:name="OAuth provider module">
+		accessTokenEndpointPath="token" doc:name="OAuth provider module" tokenTtlSeconds="30">
 		<oauth2-provider:clients>
 			<oauth2-provider:client clientId="demos-client"
 				type="PUBLIC" clientName="Demos Client" description="Demos Client desc">
