@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:signature="http://www.mulesoft.org/schema/mule/signature"
+	xmlns:oauth2-provider="http://www.mulesoft.org/schema/mule/oauth2-provider"
+	xmlns:secure-property-placeholder="http://www.mulesoft.org/schema/mule/secure-property-placeholder"
+	xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking"
+	xmlns:mulexml="http://www.mulesoft.org/schema/mule/xml" xmlns:https="http://www.mulesoft.org/schema/mule/https"
+	xmlns:github="http://www.mulesoft.org/schema/mule/github"
+	xmlns:mule-ss="http://www.mulesoft.org/schema/mule/spring-security"
+	xmlns:ss="http://www.springframework.org/schema/security"
+	xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
+	xmlns:mongo="http://www.mulesoft.org/schema/mule/mongo" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:rest="http://www.mulesoft.org/schema/mule/rest" xmlns:swagger="http://www.mulesoft.org/schema/mule/swagger"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:test="http://www.mulesoft.org/schema/mule/test"
+	xmlns:spring="http://www.springframework.org/schema/beans"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+http://www.mulesoft.org/schema/mule/oauth2-provider http://www.mulesoft.org/schema/mule/oauth2-provider/1.0/mule-oauth2-provider.xsd 
+http://www.mulesoft.org/schema/mule/signature http://www.mulesoft.org/schema/mule/signature/1.0/mule-signature.xsd 
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd 
+http://www.mulesoft.org/schema/mule/secure-property-placeholder http://www.mulesoft.org/schema/mule/secure-property-placeholder/1.0/mule-secure-property-placeholder.xsd 
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd 
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd 
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd 
+http://www.mulesoft.org/schema/mule/xml http://www.mulesoft.org/schema/mule/xml/current/mule-xml.xsd 
+http://www.mulesoft.org/schema/mule/https http://www.mulesoft.org/schema/mule/https/current/mule-https.xsd 
+http://www.mulesoft.org/schema/mule/github http://www.mulesoft.org/schema/mule/github/1.0/mule-github.xsd 
+http://www.mulesoft.org/schema/mule/spring-security http://www.mulesoft.org/schema/mule/spring-security/current/mule-spring-security.xsd
+http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd 
+http://www.mulesoft.org/schema/mule/mongo http://www.mulesoft.org/schema/mule/mongo/2.0/mule-mongo.xsd 
+http://www.mulesoft.org/schema/mule/rest http://www.mulesoft.org/schema/mule/rest/current/mule-rest.xsd 
+http://www.mulesoft.org/schema/mule/swagger http://www.mulesoft.org/schema/mule/swagger/current/mule-swagger.xsd 
+http://www.mulesoft.org/schema/mule/test http://www.mulesoft.org/schema/mule/test/3.3/mule-test.xsd "
+	version="EE-3.4.0">
+
+	<secure-property-placeholder:config
+		name="Secure_Property_Placeholder" key="${properties.key}" location="config.${env}.properties"
+		doc:name="Secure Property Placeholder" />
+
+	<signature:config name="Signature" enableLanguage="true"
+		doc:name="Signature">
+		<signature:jce-signer-config algorithm="HmacMD5"
+			key="JLfl5sER3kt4oVkzP2d39UQrUxrEK63LjmXAO45b6cU=" />
+	</signature:config>
+
+	<spring:beans>
+		<ss:authentication-manager
+			id="inMemoryResourceOwnerAuthenticationManager" alias="inMemoryAuthManager">
+			<ss:authentication-provider>
+				<ss:user-service id="resourceOwnerUserService">
+					<ss:user name="${username}" password="${password}"
+						authorities="RESOURCE_OWNER" />
+				</ss:user-service>
+			</ss:authentication-provider>
+		</ss:authentication-manager>
+	</spring:beans>
+
+
+	<mule-ss:security-manager>
+		<mule-ss:delegate-security-provider
+			name="demos-security-provider" delegate-ref="inMemoryResourceOwnerAuthenticationManager" />
+	</mule-ss:security-manager>
+
+
+	<http:connector name="http-connector" doc:name="HTTP\HTTPS" />
+
+	<oauth2-provider:config name="oauth2-provider"
+		providerName="Pre-sales Demos" resourceOwnerSecurityProvider-ref="demos-security-provider"
+		scopes="READ WRITE" connector-ref="http-connector"
+		supportedGrantTypes="RESOURCE_OWNER_PASSWORD_CREDENTIALS"
+		accessTokenEndpointPath="access-token" doc:name="OAuth provider module">
+		<oauth2-provider:clients>
+			<oauth2-provider:client clientId="demos-client"
+				type="PUBLIC" clientName="Demos Client" description="Demos Client desc">
+				<oauth2-provider:authorized-grant-types>
+					<oauth2-provider:authorized-grant-type>PASSWORD</oauth2-provider:authorized-grant-type>
+				</oauth2-provider:authorized-grant-types>
+				<oauth2-provider:scopes>
+					<oauth2-provider:scope>READ</oauth2-provider:scope>
+					<oauth2-provider:scope>WRITE</oauth2-provider:scope>
+				</oauth2-provider:scopes>
+			</oauth2-provider:client>
+		</oauth2-provider:clients>
+	</oauth2-provider:config>
+
+    <flow name="server" doc:name="server">
+        <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="9999" path="api" connector-ref="http-connector" doc:name="/api">
+            <not-filter> 
+                <wildcard-filter pattern="/favicon.ico"/> 
+            </not-filter>
+            <object-to-string-transformer/>
+            <oauth2-provider:validate/>
+        </http:inbound-endpoint>
+        <logger message="welcome!" level="INFO" doc:name="Logger"/>
+    </flow>
+
+</mule>

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mule-configuration xmlns="http://www.mulesoft.com/tooling/messageflow" name="security_example_enterprise_token">
+    <global-element type="http://www.mulesoft.org/schema/mule/secure-property-placeholder/config" name="Secure Property Placeholder" entity-id="Secure Property Placeholder#1">
+        <properties>
+            <property name="encryptionMode"/>
+            <property value="config.${env}.properties" name="location"/>
+            <property value="Secure_Property_Placeholder" name="name"/>
+            <property name="encryptionAlgorithm"/>
+            <property value="${properties.key}" name="key"/>
+            <property value="1" name="auxiliary;index"/>
+        </properties>
+    </global-element>
+    <global-element type="http://www.mulesoft.org/schema/mule/signature/config" name="Signature" entity-id="Signature#1">
+        <properties>
+            <property value="true" name="enableLanguage"/>
+            <property value="Signature" name="name"/>
+            <property name="defaultSigner"/>
+            <property value="2" name="auxiliary;index"/>
+            <property-collection name="@http://www.mulesoft.org/schema/mule/signature/jce-signer-config;0">
+                <property value="JLfl5sER3kt4oVkzP2d39UQrUxrEK63LjmXAO45b6cU=" name="key"/>
+                <property value="3" name="auxiliary;index"/>
+                <property value="3" name="auxiliary;wrapIn"/>
+                <property value="HmacMD5" name="algorithm"/>
+            </property-collection>
+        </properties>
+    </global-element>
+    <global-unknown index="5" parentIndex="4" description="false" wrapNSURL="http://www.springframework.org/schema/beans" wrapNSPref="spring" wrapIn="beans" entity-id="global-unknown#1">
+        <content>&lt;ss:authentication-manager xmlns:ss=&quot;http://www.springframework.org/schema/security&quot; id=&quot;inMemoryResourceOwnerAuthenticationManager&quot; alias=&quot;inMemoryAuthManager&quot;&gt;
+			&lt;ss:authentication-provider&gt;
+				&lt;ss:user-service id=&quot;resourceOwnerUserService&quot;&gt;
+					&lt;ss:user name=&quot;${username}&quot; password=&quot;${password}&quot; authorities=&quot;RESOURCE_OWNER&quot;/&gt;
+				&lt;/ss:user-service&gt;
+			&lt;/ss:authentication-provider&gt;
+		&lt;/ss:authentication-manager&gt;</content>
+    </global-unknown>
+    <global-unknown index="9" description="false" entity-id="global-unknown#2">
+        <content>&lt;mule-ss:security-manager xmlns:mule-ss=&quot;http://www.mulesoft.org/schema/mule/spring-security&quot;&gt;
+		&lt;mule-ss:delegate-security-provider name=&quot;demos-security-provider&quot; delegate-ref=&quot;inMemoryResourceOwnerAuthenticationManager&quot;/&gt;
+	&lt;/mule-ss:security-manager&gt;</content>
+    </global-unknown>
+    <global-element type="org.mule.tooling.ui.modules.core.global.httpConnector" name="HTTP\HTTPS" entity-id="HTTP\HTTPS#1">
+        <properties>
+            <property name="proxyUsername"/>
+            <property name="reuseAddress"/>
+            <property name="receiveBacklog"/>
+            <property name="enableCookies"/>
+            <property name="serverSoTimeout"/>
+            <property name="socketSoLinger"/>
+            <property name="clientSoTimeout"/>
+            <property name="validateConnections"/>
+            <property name="keepAlive"/>
+            <property name="label"/>
+            <property name="sendTcpNoDelay"/>
+            <property name="proxyPort"/>
+            <property name="cookieSpec"/>
+            <property name="dispatcherPoolFactory-ref"/>
+            <property name="proxyHostname"/>
+            <property name="receiveBufferSize"/>
+            <property value="http-connector" name="name"/>
+            <property name="keepSendSocketOpen"/>
+            <property name="dynamicNotification"/>
+            <property name="sendBufferSize"/>
+            <property name="proxyPassword"/>
+            <property value="11" name="auxiliary;index"/>
+        </properties>
+    </global-element>
+    <global-element type="http://www.mulesoft.org/schema/mule/oauth2-provider/config" name="OAuth provider module" entity-id="OAuth provider module#1">
+        <properties>
+            <property name="port"/>
+            <property name="authorizationCodeStore-ref"/>
+            <property value="access-token" name="accessTokenEndpointPath"/>
+            <property name="host"/>
+            <property name="authorizationEndpointPath"/>
+            <property name="rateLimiter-ref"/>
+            <property name="clientSecurityProvider-ref"/>
+            <property value="demos-security-provider" name="resourceOwnerSecurityProvider-ref"/>
+            <property name="enableRefreshToken"/>
+            <property name="loginPage"/>
+            <property value="RESOURCE_OWNER_PASSWORD_CREDENTIALS" name="supportedGrantTypes"/>
+            <property name="tokenTtlSeconds"/>
+            <property value="READ WRITE" name="scopes"/>
+            <property name="tokenStore-ref"/>
+            <property value="Pre-sales Demos" name="providerName"/>
+            <property value="oauth2-provider" name="name"/>
+            <property name="clientStore-ref"/>
+            <property name="authorizationTtlSeconds"/>
+            <property value="12" name="auxiliary;index"/>
+            <property value="http-connector" name="connector-ref"/>
+            <property-collection name="@http://www.mulesoft.org/schema/mule/oauth2-provider/configurable-clientss;0">
+                <property value="13" name="auxiliary;index"/>
+                <property value="13" name="auxiliary;wrapIn"/>
+                <property-collection name="@http://www.mulesoft.org/schema/mule/oauth2-provider/configurable-clients;1">
+                    <property value="&#xA;&#x9;&#x9;&#x9;&#x9;&#xA;&#x9;&#x9;&#x9;&#x9;&#xA;&#x9;&#x9;&#x9;" name="value"/>
+                    <property value="14" name="auxiliary;index"/>
+                    <property value="14" name="auxiliary;wrapIn"/>
+                </property-collection>
+            </property-collection>
+        </properties>
+    </global-element>
+    <flow SubFlow="false" name="server" entity-id="63f04a4c-8d7b-41cb-ad01-b5bf2a2ecd58">
+        <properties>
+            <property name="processingStrategy"/>
+            <property name="processingStrategy2"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property value="20" name="auxiliary;index"/>
+        </properties>
+        <lane isChoiceOtherwiseLane="false" index="0" hadOnlyOneElement="false" entity-id="compartment-lane#1">
+            <graphicalData height="0" width="0" y="0" x="0"/>
+            <endpoint message-exchange-pattern="RequestResponse" direction="Inbound" type="http://www.mulesoft.org/schema/mule/http/endpoint" name="/api" entity-id="HTTP#1">
+                <graphicalData height="0" width="0" y="0" x="0"/>
+                <properties>
+                    <property value="9999" name="port"/>
+                    <property value="localhost" name="host"/>
+                    <property name="businessEventsLabel"/>
+                    <property name="followRedirects"/>
+                    <property value="http://www.mulesoft.org/schema/mule/http/endpoint" name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute"/>
+                    <property name="keep-alive"/>
+                    <property name="contentType"/>
+                    <property name="disableTransportTransformer"/>
+                    <property name="password"/>
+                    <property value="request-response" name="exchange-pattern"/>
+                    <property name="tracking:enable-default-events"/>
+                    <property name="ref"/>
+                    <property name="transformer-refs"/>
+                    <property name="httpLabel"/>
+                    <property name="address"/>
+                    <property value="api" name="path"/>
+                    <property name="encoding"/>
+                    <property name="responseTransformer-refs"/>
+                    <property name="method"/>
+                    <property name="user"/>
+                    <property name="responseTimeout"/>
+                    <property name="mimeType"/>
+                    <property value="21" name="auxiliary;index"/>
+                    <property value="http-connector" name="connector-ref"/>
+                </properties>
+            </endpoint>
+            <pattern type="http://www.mulesoft.org/schema/mule/core/logger" name="Logger" entity-id="Logger#1">
+                <graphicalData height="0" width="0" y="0" x="0"/>
+                <properties>
+                    <property value="welcome!" name="message"/>
+                    <property name="category"/>
+                    <property value="INFO" name="level"/>
+                    <property value="26" name="auxiliary;index"/>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <description></description>
+</mule-configuration>
