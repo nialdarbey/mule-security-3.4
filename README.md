@@ -26,50 +26,51 @@ supportedGrantTypes to "RESOURCE_OWNER_PASSWORD_CREDENTIALS" thus obliging the r
 and password, grantType=password and the required scopes when requesting a token, like so:
 
 ```bash
-	curl "http://localhost:9999/access-token?grant_type=passwordarbey&password=hello123&scope=READ%20WRITE"
+curl http://localhost:9999/access-token?grant_type=passwordarbey&password=hello123&scope=READ%20WRITE
 ```
 which will give a response like:
 
 ```json
-	{"scope":"READ WRITE","expires_in":86400,"token_type":"bearer","access_token":"l8bFMEC9PA7NcpmHeTYS43Wl96_Y6LuIOhGci2zMJf0Qso9llgRLkgQjarMzUhvQz8vGVHmazrZ2C-Gjo20khg"}
+{"scope":"READ WRITE","expires_in":86400,"token_type":"bearer","access_token":"l8bFMEC9PA7NcpmHeTYS43Wl96_Y6LuIOhGci2zMJf0Qso9llgRLkgQjarMzUhvQz8vGVHmazrZ2C-Gjo20khg"}
 ```
 
 The configuration of the Authorization Provider (note that the provider scopes are specific to the application):
 ```xml
-	<oauth2-provider:config name="oauth2-provider"
-		providerName="Pre-sales Demos" resourceOwnerSecurityProvider-ref="demos-security-provider"
-		scopes="READ WRITE" connector-ref="http-connector"
-		supportedGrantTypes="RESOURCE_OWNER_PASSWORD_CREDENTIALS"
-		accessTokenEndpointPath="access-token" doc:name="OAuth provider module">
-		<oauth2-provider:clients>
-			<oauth2-provider:client clientId="demos-client"
-				type="PUBLIC" clientName="Demos Client" description="Demos Client desc">
-				<oauth2-provider:authorized-grant-types>
-					<oauth2-provider:authorized-grant-type>PASSWORD</oauth2-provider:authorized-grant-type>
-				</oauth2-provider:authorized-grant-types>
-				<oauth2-provider:scopes>
-					<oauth2-provider:scope>READ</oauth2-provider:scope>
-					<oauth2-provider:scope>WRITE</oauth2-provider:scope>
-				</oauth2-provider:scopes>
-			</oauth2-provider:client>
-		</oauth2-provider:clients>
-	</oauth2-provider:config>
+<oauth2-provider:config name="oauth2-provider"
+	providerName="Pre-sales Demos" resourceOwnerSecurityProvider-ref="demos-security-provider"
+	scopes="READ WRITE" connector-ref="http-connector"
+	supportedGrantTypes="RESOURCE_OWNER_PASSWORD_CREDENTIALS"
+	accessTokenEndpointPath="access-token" doc:name="OAuth provider module">
+	<oauth2-provider:clients>
+		<oauth2-provider:client clientId="demos-client"
+			type="PUBLIC" clientName="Demos Client" description="Demos Client desc">
+			<oauth2-provider:authorized-grant-types>
+				<oauth2-provider:authorized-grant-type>PASSWORD</oauth2-provider:authorized-grant-type>
+			</oauth2-provider:authorized-grant-types>
+			<oauth2-provider:scopes>
+				<oauth2-provider:scope>READ</oauth2-provider:scope>
+				<oauth2-provider:scope>WRITE</oauth2-provider:scope>
+			</oauth2-provider:scopes>
+		</oauth2-provider:client>
+	</oauth2-provider:clients>
+</oauth2-provider:config>
 ```
 
 Having the token in hand, the client can then request access to the service like so:
 
-	curl -vv http://localhost:9999/api/demos?access_token=l8bFMEC9PA7NcpmHeTYS43Wl96_Y6LuIOhGci2zMJf0Qso9llgRLkgQjarMzUhvQz8vGVHmazrZ2C-Gjo20khg
-
+```bash
+curl -vv http://localhost:9999/api/demos?access_token=l8bFMEC9PA7NcpmHeTYS43Wl96_Y6LuIOhGci2zMJf0Qso9llgRLkgQjarMzUhvQz8vGVHmazrZ2C-Gjo20khg
+```
 The token is checked by the validate action of the oauth2-provider.
 
 ```xml
-        <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="9999" path="api" connector-ref="http-connector" doc:name="/api">
-            <not-filter> 
-                <wildcard-filter pattern="/favicon.ico"/> 
-            </not-filter>
-            <object-to-string-transformer/>
-            <oauth2-provider:validate/>
-        </http:inbound-endpoint>
+<http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="9999" path="api" connector-ref="http-connector" doc:name="/api">
+    <not-filter> 
+        <wildcard-filter pattern="/favicon.ico"/> 
+    </not-filter>
+    <object-to-string-transformer/>
+    <oauth2-provider:validate/>
+</http:inbound-endpoint>
 ```
 
 Providing the correct token yields a 200 OK, while an invalid token yields 403 FORBIDDEN
