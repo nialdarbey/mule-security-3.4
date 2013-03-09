@@ -28,7 +28,7 @@ and verify incoming tokens. As we interact with it, we of course are the Resourc
 In our requests we provide the username and password, grantType=password and the required scopes when requesting a token, like so:
 
 ```bash
-curl http://localhost:9999/access-token?grant_type=passwordarbey&password=hello123&scope=READ%20WRITE
+curl http://localhost:9999/access-token?grant_type=password&client_id=demos-client&username=nialdarbey&password=hello123&scope=READ%20WRITE
 ```
 which will give a response like:
 
