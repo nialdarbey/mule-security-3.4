@@ -17,15 +17,15 @@ Secure Token Service
 ====================
 OAuth2 specifies 4 roles in its dance:
 	
-	1. Service Provider
-	2. Authorization Provider
+	1. Resource Server
+	2. Authorization Server
 	3. Client
 	4. Resource Owner
 	
-The idea in this example is to allow Mule to play the part of both the role Service Provider and Authorization Provider, in that it can both issue tokens
-and verify incoming tokens. We set the accessTokenEndpointPath to "access-token", the provider-authorized-grant-type to PASSWORD and the 
-supportedGrantTypes to "RESOURCE_OWNER_PASSWORD_CREDENTIALS" thus obliging the resource owner and client to provide the username 
-and password, grantType=password and the required scopes when requesting a token, like so:
+The idea in this example is to allow Mule to play the part of two roles: Resource Server and Authorization Provider, in that it can both issue tokens
+and verify incoming tokens. As we interact with it, we of course are the Resource Owner, using the Client, curl to make the requests on our behalf. 
+
+In our requests we provide the username and password, grantType=password and the required scopes when requesting a token, like so:
 
 ```bash
 curl http://localhost:9999/access-token?grant_type=passwordarbey&password=hello123&scope=READ%20WRITE
@@ -36,7 +36,9 @@ which will give a response like:
 {"scope":"READ WRITE","expires_in":86400,"token_type":"bearer","access_token":"l8bFMEC9PA7NcpmHeTYS43Wl96_Y6LuIOhGci2zMJf0Qso9llgRLkgQjarMzUhvQz8vGVHmazrZ2C-Gjo20khg"}
 ```
 
-The configuration of the Authorization Provider (note that the provider scopes are specific to the application):
+The configuration of the Authorization Provider follows. Note that the provider scopes are specific to the application and we set the accessTokenEndpointPath to "access-token", the provider-authorized-grant-type to PASSWORD and the 
+supportedGrantTypes to "RESOURCE_OWNER_PASSWORD_CREDENTIALS":
+
 ```xml
 <oauth2-provider:config name="oauth2-provider"
 	providerName="Pre-sales Demos" resourceOwnerSecurityProvider-ref="demos-security-provider"
