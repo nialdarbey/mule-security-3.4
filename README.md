@@ -29,7 +29,7 @@ and verify incoming tokens. As we interact with it, we of course are the Resourc
 In our requests we provide the username and password, grantType=password and the required scopes when requesting a token, like so:
 
 ```bash
-curl http://localhost:9999/access-token?grant_type=password&client_id=demos-client
+curl http://localhost:9999/token?grant_type=password&client_id=demos-client
 	&username=nialdarbey&password=hello123&scope=READ%20WRITE
 ```
 which will give a response like:
@@ -39,7 +39,7 @@ which will give a response like:
 	"access_token":"l8bFMEC9PA7NcpmHeTYS43Wl96_Y6LuIOhGci2zMJf0Qso9llgRLkgQjarMzUhvQz8vGVHmazrZ2C-Gjo20khg"}
 ```
 
-The configuration of the Authorization Provider follows. Note that the provider scopes are specific to the application and we set the accessTokenEndpointPath to "access-token", the provider-authorized-grant-type to PASSWORD and the 
+The configuration of the Authorization Provider follows. Note that the provider scopes are specific to the application and we set the accessTokenEndpointPath to "token" as invoked above, the provider-authorized-grant-type to PASSWORD and the 
 supportedGrantTypes to "RESOURCE_OWNER_PASSWORD_CREDENTIALS":
 
 ```xml
@@ -47,7 +47,7 @@ supportedGrantTypes to "RESOURCE_OWNER_PASSWORD_CREDENTIALS":
 	providerName="Pre-sales Demos" resourceOwnerSecurityProvider-ref="demos-security-provider"
 	scopes="READ WRITE" connector-ref="http-connector"
 	supportedGrantTypes="RESOURCE_OWNER_PASSWORD_CREDENTIALS"
-	accessTokenEndpointPath="access-token" doc:name="OAuth provider module">
+	accessTokenEndpointPath="token" doc:name="OAuth provider module">
 	<oauth2-provider:clients>
 		<oauth2-provider:client clientId="demos-client"
 			type="PUBLIC" clientName="Demos Client" description="Demos Client desc">

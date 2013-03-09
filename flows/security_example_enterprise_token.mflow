@@ -54,7 +54,7 @@
         <properties>
             <property name="port"/>
             <property name="authorizationCodeStore-ref"/>
-            <property value="access-token" name="accessTokenEndpointPath"/>
+            <property value="token" name="accessTokenEndpointPath"/>
             <property name="host"/>
             <property name="authorizationEndpointPath"/>
             <property name="rateLimiter-ref"/>
@@ -83,7 +83,7 @@
             </property-collection>
         </properties>
     </global-element>
-    <flow SubFlow="false" name="server" entity-id="00ddfa9e-f311-4447-a02e-0a0dd08b0d72">
+    <flow SubFlow="false" name="server" entity-id="c141a33a-3cb7-4048-bfb3-018dce69fa12">
         <properties>
             <property name="processingStrategy"/>
             <property name="processingStrategy2"/>
