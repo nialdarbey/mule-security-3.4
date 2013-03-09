@@ -16,10 +16,10 @@ given the key 1234567890123456 we refer to the key as ${properties.key} and pass
 Secure Token Service
 ====================
 OAuth2 specifies 4 roles in its dance:
-# Service Provider
-# Authorization Provider
-# Client
-# Resource Owner
+	1. Service Provider
+	2. Authorization Provider
+	3. Client
+	4. Resource Owner
 The idea in this example is to allow Mule to play the part of both the role Service Provider and Authorization Provider, in that it can both issue tokens
 and verify incoming tokens. We set the accessTokenEndpointPath to "access-token", the provider-authorized-grant-type to PASSWORD and the 
 supportedGrantTypes to "RESOURCE_OWNER_PASSWORD_CREDENTIALS" thus obliging the resource owner and client to provide the username 
@@ -75,4 +75,6 @@ The token is checked by the validate action of the oauth2-provider.
 
 Providing the correct token yields a 200 OK, while an invalid token yields 403 FORBIDDEN
 
-
+Contact
+=======
+* nial.darbey@mulesoft.com
