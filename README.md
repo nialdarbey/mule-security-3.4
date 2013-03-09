@@ -14,7 +14,7 @@ editor.
 The private key used to encrypt the property must be the same as that supplied to mule upon server startup. So, in this example, 
 given the key 1234567890123456 we refer to the key as ${properties.key} and pass it at server startup as a JVM argument
 ```bash
-	$MULE_HOME/bin/mule -Dproperties.key=1234567890123456
+$MULE_HOME/bin/mule -Dproperties.key=1234567890123456
 ```
 
 Secure Token Service
