@@ -10,7 +10,7 @@ editor. The private key used to encrypt the property must be the same as that su
 given the key 1234567890123456 we refer to the key as ${properties.key} and pass it at server startup as a JVM property -Dproperties.key=1234567890123456
 
 ```xml
-	<secure-property-placeholder:config name="Secure_Property_Placeholder" key="${properties.key}" location="config.${env}.properties" doc:name="Secure Property Placeholder" />
+<secure-property-placeholder:config name="Secure_Property_Placeholder" key="${properties.key}" location="config.${env}.properties" doc:name="Secure Property Placeholder" />
 ```
 
 Secure Token Service
