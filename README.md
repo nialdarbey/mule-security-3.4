@@ -64,16 +64,47 @@ supportedGrantTypes to "RESOURCE_OWNER_PASSWORD_CREDENTIALS":
 </oauth2-provider:config>
 ```
 
-Having the token in hand, the client can then request access to the service like so:
+Digital Signature Processor
+===========================
+Mule can both sign data using a Signer, an algorithm and a key and verify that an incoming signature is correct by regenerating a signature against the same data (the input-ref) and comparing the two.
+Here follows a flow which will return the signature of the supplied path parameter
+```xml
+	<flow name="getSignature" doc:name="getSignature">
+		<http:inbound-endpoint exchange-pattern="request-response"
+			host="localhost" port="7777" path="signature" connector-ref="http-connector"
+			doc:name=":8888/api">
+			<not-filter>
+				<wildcard-filter pattern="/favicon.ico" />
+			</not-filter>
+		</http:inbound-endpoint>
+		<logger level="INFO" doc:name="signature" />
+		<object-to-byte-array-transformer
+			doc:name="Object to Byte Array" />
+		<signature:sign config-ref="Signature" variable="signature"
+			doc:name="sign"
+			input-ref="#[message.inboundProperties['http.query.params'].path.getBytes()]">
+			<signature:jce-signer algorithm="HmacMD5"
+				key="1@s9bl&gt;1LOJ94z4" />
+		</signature:sign>
+		<set-payload value="#[flowVars.signature]" doc:name="signature" />
+		<logger level="INFO" message="#[flowVars.signature]" doc:name="Logger" />
+	</flow>
+```
+
+Authentication using Token and Signature
+========================================
+
+Having at hand both the token and the signature generated above, the client can then request access to the service like so:
 
 ```bash
-curl -vv http://localhost:9999/api/demos?access_token=l8bFMEC9PA7NcpmHeTYS43Wl96_Y6LuIOhGci2zMJf0Qso9llgRLkgQjarMzUhvQz8vGVHmazrZ2C-Gjo20khg -H 'signature:xGmhL3iEP70UQMUQVlwI0Q=='
+curl -vv http://localhost:9999/api/demos?access_token=l8bFMEC9PA7NcpmHeTYS43Wl96_Y6LuIOhGci2zMJf0Qso9llgRLkgQjarMzUhvQz8vGVHmazrZ2C-Gjo20khg 
+	-H 'signature:xGmhL3iEP70UQMUQVlwI0Q=='
 ```
 
 There are security check-points in this application:
 	
-	1. The incoming token is validated. If it has expired, is not provided or not recognised, then a 403 FORBIDDEN is sent back to the client
-	2. If the token is validated, then the signature of the value '/api/demos' using the key '1@s9bl&gt;1LOJ94z4' is compared with the incoming header 'signature'. If the two match then the signature is verirified
+* The incoming token is validated. If it has expired, is not provided or not recognised, then a 403 FORBIDDEN is sent back to the client
+* If the token is validated, then the signature of the value '/api/demos' using the key '1@s9bl&gt;1LOJ94z4' is compared with the incoming header 'signature'. If the two match then the signature is verirified
 
 ```xml
 	<flow name="server" doc:name="server">
@@ -95,7 +126,6 @@ There are security check-points in this application:
 	</flow>
 
 ```
-
 	
 Both the OAuth2 validator and the Signature verifier are filters. The message will only pass through upon validation and verification respectively.
 
