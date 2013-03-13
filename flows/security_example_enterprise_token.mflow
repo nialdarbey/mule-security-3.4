@@ -54,7 +54,7 @@
         <properties>
             <property name="port"/>
             <property name="authorizationCodeStore-ref"/>
-            <property value="token" name="accessTokenEndpointPath"/>
+            <property value="newToken" name="accessTokenEndpointPath"/>
             <property name="host"/>
             <property name="authorizationEndpointPath"/>
             <property name="rateLimiter-ref"/>
@@ -63,7 +63,7 @@
             <property name="enableRefreshToken"/>
             <property name="loginPage"/>
             <property value="RESOURCE_OWNER_PASSWORD_CREDENTIALS" name="supportedGrantTypes"/>
-            <property value="30" name="tokenTtlSeconds"/>
+            <property name="tokenTtlSeconds"/>
             <property value="READ WRITE" name="scopes"/>
             <property name="tokenStore-ref"/>
             <property value="Pre-sales Demos" name="providerName"/>
@@ -83,17 +83,117 @@
             </property-collection>
         </properties>
     </global-element>
-    <flow SubFlow="false" name="server" entity-id="210ef3c9-f9bc-4cf8-afc5-039b6aa7a0e4">
+    <global-element type="http://www.mulesoft.org/schema/mule/signature/config" name="Signature" entity-id="Signature#1">
+        <properties>
+            <property name="enableLanguage"/>
+            <property value="Signature" name="name"/>
+            <property name="defaultSigner"/>
+            <property value="18" name="auxiliary;index"/>
+        </properties>
+    </global-element>
+    <flow SubFlow="false" name="getSignature" entity-id="d45f41b8-8cc2-4d29-aae5-3afa2507a029">
         <properties>
             <property name="processingStrategy"/>
             <property name="processingStrategy2"/>
             <property name="bussinessEventsLabel"/>
             <property name="tracking:enable-default-events"/>
-            <property value="18" name="auxiliary;index"/>
+            <property value="19" name="auxiliary;index"/>
         </properties>
         <lane isChoiceOtherwiseLane="false" index="0" hadOnlyOneElement="false" entity-id="compartment-lane#1">
             <graphicalData height="0" width="0" y="0" x="0"/>
-            <endpoint message-exchange-pattern="RequestResponse" direction="Inbound" type="http://www.mulesoft.org/schema/mule/http/endpoint" name="/api" entity-id="HTTP#1">
+            <endpoint message-exchange-pattern="RequestResponse" direction="Inbound" type="http://www.mulesoft.org/schema/mule/http/endpoint" name=":8888/api" entity-id="HTTP#1">
+                <graphicalData height="0" width="0" y="0" x="0"/>
+                <properties>
+                    <property value="7777" name="port"/>
+                    <property value="localhost" name="host"/>
+                    <property name="businessEventsLabel"/>
+                    <property name="followRedirects"/>
+                    <property value="http://www.mulesoft.org/schema/mule/http/endpoint" name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute"/>
+                    <property name="keep-alive"/>
+                    <property name="contentType"/>
+                    <property name="disableTransportTransformer"/>
+                    <property name="password"/>
+                    <property value="request-response" name="exchange-pattern"/>
+                    <property name="tracking:enable-default-events"/>
+                    <property name="ref"/>
+                    <property name="transformer-refs"/>
+                    <property name="httpLabel"/>
+                    <property name="address"/>
+                    <property value="signature" name="path"/>
+                    <property name="encoding"/>
+                    <property name="responseTransformer-refs"/>
+                    <property name="method"/>
+                    <property name="user"/>
+                    <property name="responseTimeout"/>
+                    <property name="mimeType"/>
+                    <property value="20" name="auxiliary;index"/>
+                    <property value="http-connector" name="connector-ref"/>
+                </properties>
+            </endpoint>
+            <pattern type="http://www.mulesoft.org/schema/mule/core/logger" name="signature" entity-id="Logger#1">
+                <graphicalData height="0" width="0" y="0" x="0"/>
+                <properties>
+                    <property name="message"/>
+                    <property name="category"/>
+                    <property value="INFO" name="level"/>
+                    <property value="23" name="auxiliary;index"/>
+                </properties>
+            </pattern>
+            <pattern type="http://www.mulesoft.org/schema/mule/core/object-to-byte-array-transformer" name="Object to Byte Array" entity-id="Object to Byte Array#1">
+                <graphicalData height="0" width="0" y="0" x="0"/>
+                <properties>
+                    <property name="returnClass"/>
+                    <property name="ignoreBadInput"/>
+                    <property name="encoding"/>
+                    <property name="mimeType"/>
+                    <property value="24" name="auxiliary;index"/>
+                </properties>
+            </pattern>
+            <pattern type="http://www.mulesoft.org/schema/mule/signature/signature-connector" name="sign" entity-id="Signature#2">
+                <graphicalData height="0" width="0" y="0" x="0"/>
+                <properties>
+                    <property value="#[message.inboundProperties['http.query.params'].path.getBytes()]" name="input-ref"/>
+                    <property value="http://www.mulesoft.org/schema/mule/signature/sign" name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute"/>
+                    <property value="signature" name="variable"/>
+                    <property value="Signature" name="config-ref"/>
+                    <property value="25" name="auxiliary;index"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/signature/jce-signer;0">
+                        <property value="1@s9bl&gt;1LOJ94z4" name="key"/>
+                        <property value="26" name="auxiliary;index"/>
+                        <property value="26" name="auxiliary;wrapIn"/>
+                        <property value="HmacMD5" name="algorithm"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+            <pattern type="http://www.mulesoft.org/schema/mule/core/set-payload" name="signature" entity-id="Set Payload#1">
+                <graphicalData height="0" width="0" y="0" x="0"/>
+                <properties>
+                    <property value="#[flowVars.signature]" name="value"/>
+                    <property value="27" name="auxiliary;index"/>
+                </properties>
+            </pattern>
+            <pattern type="http://www.mulesoft.org/schema/mule/core/logger" name="Logger" entity-id="Logger#2">
+                <graphicalData height="0" width="0" y="0" x="0"/>
+                <properties>
+                    <property value="#[flowVars.signature]" name="message"/>
+                    <property name="category"/>
+                    <property value="INFO" name="level"/>
+                    <property value="28" name="auxiliary;index"/>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="server" entity-id="35d82129-6345-4726-ab83-6ffce0de0026">
+        <properties>
+            <property name="processingStrategy"/>
+            <property name="processingStrategy2"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property value="29" name="auxiliary;index"/>
+        </properties>
+        <lane isChoiceOtherwiseLane="false" index="0" hadOnlyOneElement="false" entity-id="compartment-lane#2">
+            <graphicalData height="0" width="0" y="0" x="0"/>
+            <endpoint message-exchange-pattern="RequestResponse" direction="Inbound" type="http://www.mulesoft.org/schema/mule/http/endpoint" name=":9999/api" entity-id="HTTP#2">
                 <graphicalData height="0" width="0" y="0" x="0"/>
                 <properties>
                     <property value="9999" name="port"/>
@@ -118,20 +218,80 @@
                     <property name="user"/>
                     <property name="responseTimeout"/>
                     <property name="mimeType"/>
-                    <property value="19" name="auxiliary;index"/>
+                    <property value="30" name="auxiliary;index"/>
                     <property value="http-connector" name="connector-ref"/>
                 </properties>
             </endpoint>
-            <pattern type="http://www.mulesoft.org/schema/mule/core/logger" name="Logger" entity-id="Logger#1">
+            <pattern type="http://www.mulesoft.org/schema/mule/core/logger" name="Logger" entity-id="Logger#3">
                 <graphicalData height="0" width="0" y="0" x="0"/>
                 <properties>
-                    <property value="welcome!" name="message"/>
+                    <property name="message"/>
                     <property name="category"/>
                     <property value="INFO" name="level"/>
-                    <property value="24" name="auxiliary;index"/>
+                    <property value="32" name="auxiliary;index"/>
+                </properties>
+            </pattern>
+            <pattern type="http://www.mulesoft.org/schema/mule/oauth2-provider/oauth2-provider-connector" name="validate" entity-id="OAuth provider module#2">
+                <graphicalData height="0" width="0" y="0" x="0"/>
+                <properties>
+                    <property name="scopes"/>
+                    <property value="http://www.mulesoft.org/schema/mule/oauth2-provider/validate" name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute"/>
+                    <property value="oauth2-provider" name="config-ref"/>
+                    <property value="33" name="auxiliary;index"/>
+                    <property name="resourceOwnerRoles"/>
+                </properties>
+            </pattern>
+            <pattern type="http://www.mulesoft.org/schema/mule/core/properties-transformer" name="http.status = 403" entity-id="Property#1">
+                <graphicalData height="0" width="0" y="0" x="0"/>
+                <properties>
+                    <property value="http.status" name="propertyName"/>
+                    <property value="403" name="value"/>
+                    <property value="http://www.mulesoft.org/schema/mule/core/set-property" name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute"/>
+                    <property value="34" name="auxiliary;index"/>
+                </properties>
+            </pattern>
+            <pattern type="http://www.mulesoft.org/schema/mule/signature/signature-connector" name="verify" entity-id="Signature#3">
+                <graphicalData height="0" width="0" y="0" x="0"/>
+                <properties>
+                    <property value="#[message.inboundProperties.signature]" name="expectedSignature"/>
+                    <property value="JCE_SIGNER" name="using"/>
+                    <property value="#[message.inboundProperties['http.request.path']]" name="input-ref"/>
+                    <property value="http://www.mulesoft.org/schema/mule/signature/verify-signature" name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute"/>
+                    <property value="Signature" name="config-ref"/>
+                    <property value="35" name="auxiliary;index"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/signature/jce-signer;0">
+                        <property value="1@s9bl&gt;1LOJ94z4" name="key"/>
+                        <property value="36" name="auxiliary;index"/>
+                        <property value="36" name="auxiliary;wrapIn"/>
+                        <property value="HmacMD5" name="algorithm"/>
+                    </property-collection>
+                </properties>
+            </pattern>
+            <pattern type="http://www.mulesoft.org/schema/mule/core/properties-transformer" name="http.status = 200" entity-id="Property#2">
+                <graphicalData height="0" width="0" y="0" x="0"/>
+                <properties>
+                    <property value="http.status" name="propertyName"/>
+                    <property value="200" name="value"/>
+                    <property value="http://www.mulesoft.org/schema/mule/core/set-property" name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute"/>
+                    <property value="37" name="auxiliary;index"/>
+                </properties>
+            </pattern>
+            <pattern type="http://www.mulesoft.org/schema/mule/core/logger" name="Logger" entity-id="Logger#4">
+                <graphicalData height="0" width="0" y="0" x="0"/>
+                <properties>
+                    <property value="Welcome" name="message"/>
+                    <property name="category"/>
+                    <property value="INFO" name="level"/>
+                    <property value="38" name="auxiliary;index"/>
+                </properties>
+            </pattern>
+            <pattern type="http://www.mulesoft.org/schema/mule/core/set-payload" name="Welcome" entity-id="Set Payload#2">
+                <graphicalData height="0" width="0" y="0" x="0"/>
+                <properties>
+                    <property value="Welcome" name="value"/>
+                    <property value="39" name="auxiliary;index"/>
                 </properties>
             </pattern>
         </lane>
     </flow>
-    <description></description>
 </mule-configuration>

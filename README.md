@@ -32,17 +32,15 @@ and verify incoming tokens. As we interact with it, we of course are the Resourc
 In our requests we provide the username and password, grantType=password and the required scopes when requesting a token, like so:
 
 ```bash
-curl http://localhost:9999/token?grant_type=password&client_id=demos-client
-	&username=nialdarbey&password=hello123&scope=READ%20WRITE
+curl http://localhost:9999/newToken?grant_type=password&client_id=demos-client&username=nialdarbey&password=hello123&scope=READ%20WRITE
 ```
 which will give a response like:
 
 ```json
-{"scope":"READ WRITE","expires_in":86400,"token_type":"bearer",
-	"access_token":"l8bFMEC9PA7NcpmHeTYS43Wl96_Y6LuIOhGci2zMJf0Qso9llgRLkgQjarMzUhvQz8vGVHmazrZ2C-Gjo20khg"}
+{"scope":"READ WRITE","expires_in":86400,"token_type":"bearer","access_token":"l8bFMEC9PA7NcpmHeTYS43Wl96_Y6LuIOhGci2zMJf0Qso9llgRLkgQjarMzUhvQz8vGVHmazrZ2C-Gjo20khg"}
 ```
 
-The configuration of the Authorization Provider follows. Note that the provider scopes are specific to the application and we set the accessTokenEndpointPath to "token" as invoked above, the provider-authorized-grant-type to PASSWORD and the 
+The configuration of the Authorization Provider follows. Note that the provider scopes are specific to the application and we set the accessTokenEndpointPath to "newToken" as invoked above, the provider-authorized-grant-type to PASSWORD and the 
 supportedGrantTypes to "RESOURCE_OWNER_PASSWORD_CREDENTIALS":
 
 ```xml
@@ -69,23 +67,37 @@ supportedGrantTypes to "RESOURCE_OWNER_PASSWORD_CREDENTIALS":
 Having the token in hand, the client can then request access to the service like so:
 
 ```bash
-curl -vv http://localhost:9999/api/demos
-	?access_token=l8bFMEC9PA7NcpmHeTYS43Wl96_Y6LuIOhGci2zMJf0Qso9llgRLkgQjarMzUhvQz8vGVHmazrZ2C-Gjo20khg
+curl -vv http://localhost:9999/api/demos?access_token=l8bFMEC9PA7NcpmHeTYS43Wl96_Y6LuIOhGci2zMJf0Qso9llgRLkgQjarMzUhvQz8vGVHmazrZ2C-Gjo20khg -H 'signature:xGmhL3iEP70UQMUQVlwI0Q=='
 ```
-The token is checked by the validate action of the oauth2-provider.
+
+There are security check-points in this application:
+	
+	1. The incoming token is validated. If it has expired, is not provided or not recognised, then a 403 FORBIDDEN is sent back to the client
+	2. If the token is validated, then the signature of the value '/api/demos' using the key '1@s9bl&gt;1LOJ94z4' is compared with the incoming header 'signature'. If the two match then the signature is verirified
 
 ```xml
-<http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="9999" 
-	path="api" connector-ref="http-connector" doc:name="/api">
-    <not-filter> 
-        <wildcard-filter pattern="/favicon.ico"/> 
-    </not-filter>
-    <object-to-string-transformer/>
-    <oauth2-provider:validate/>
-</http:inbound-endpoint>
+	<flow name="server" doc:name="server">
+		<http:inbound-endpoint exchange-pattern="request-response"
+			host="localhost" port="9999" path="api" connector-ref="http-connector"
+			doc:name=":9999/api">
+			<object-to-string-transformer />
+		</http:inbound-endpoint>
+		<oauth2-provider:validate  config-ref="oauth2-provider" doc:name="validate" />
+        <set-property propertyName="http.status" value="403" doc:name="http.status = 403"/>
+		<signature:verify-signature config-ref="Signature"
+			using="JCE_SIGNER" input-ref="#[message.inboundProperties['http.request.path']]"
+			expectedSignature="#[message.inboundProperties.signature]" doc:name="verify">
+			<signature:jce-signer algorithm="HmacMD5"
+				key="1@s9bl&gt;1LOJ94z4" />
+		</signature:verify-signature>
+        <set-property propertyName="http.status" value="200" doc:name="http.status = 200"/>
+		<set-payload value="Welcome" doc:name="Welcome" />
+	</flow>
+
 ```
 
-Providing the correct token yields a 200 OK, while an invalid token yields 403 FORBIDDEN
+	
+Both the OAuth2 validator and the Signature verifier are filters. The message will only pass through upon validation and verification respectively.
 
 Contact
 =======

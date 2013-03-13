@@ -6,5 +6,6 @@
 	<classpathentry kind="src" path="src/test/java"/>
 	<classpathentry kind="src" path="src/main/resources"/>
 	<classpathentry kind="src" path="src/test/resources"/>
+	<classpathentry kind="con" path="MULE_LIB/Signature"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

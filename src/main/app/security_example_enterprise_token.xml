@@ -17,17 +17,16 @@
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
 http://www.mulesoft.org/schema/mule/oauth2-provider http://www.mulesoft.org/schema/mule/oauth2-provider/1.0/mule-oauth2-provider.xsd 
 http://www.mulesoft.org/schema/mule/signature http://www.mulesoft.org/schema/mule/signature/1.0/mule-signature.xsd 
-http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd 
 http://www.mulesoft.org/schema/mule/secure-property-placeholder http://www.mulesoft.org/schema/mule/secure-property-placeholder/1.0/mule-secure-property-placeholder.xsd 
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd 
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd 
 http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd 
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd 
 http://www.mulesoft.org/schema/mule/xml http://www.mulesoft.org/schema/mule/xml/current/mule-xml.xsd 
 http://www.mulesoft.org/schema/mule/https http://www.mulesoft.org/schema/mule/https/current/mule-https.xsd 
 http://www.mulesoft.org/schema/mule/github http://www.mulesoft.org/schema/mule/github/1.0/mule-github.xsd 
 http://www.mulesoft.org/schema/mule/spring-security http://www.mulesoft.org/schema/mule/spring-security/current/mule-spring-security.xsd
-http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
-http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd 
+http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-current.xsd 
 http://www.mulesoft.org/schema/mule/mongo http://www.mulesoft.org/schema/mule/mongo/2.0/mule-mongo.xsd 
 http://www.mulesoft.org/schema/mule/rest http://www.mulesoft.org/schema/mule/rest/current/mule-rest.xsd 
 http://www.mulesoft.org/schema/mule/swagger http://www.mulesoft.org/schema/mule/swagger/current/mule-swagger.xsd 
@@ -61,9 +60,8 @@ http://www.mulesoft.org/schema/mule/test http://www.mulesoft.org/schema/mule/tes
 
 	<oauth2-provider:config name="oauth2-provider"
 		providerName="Pre-sales Demos" resourceOwnerSecurityProvider-ref="demos-security-provider"
-		scopes="READ WRITE" connector-ref="http-connector"
-		supportedGrantTypes="RESOURCE_OWNER_PASSWORD_CREDENTIALS"
-		accessTokenEndpointPath="token" doc:name="OAuth provider module" tokenTtlSeconds="30">
+		scopes="READ WRITE" connector-ref="http-connector" accessTokenEndpointPath="newToken"
+		supportedGrantTypes="RESOURCE_OWNER_PASSWORD_CREDENTIALS" doc:name="OAuth provider module">
 		<oauth2-provider:clients>
 			<oauth2-provider:client clientId="demos-client"
 				type="PUBLIC" clientName="Demos Client" description="Demos Client desc">
@@ -77,16 +75,47 @@ http://www.mulesoft.org/schema/mule/test http://www.mulesoft.org/schema/mule/tes
 			</oauth2-provider:client>
 		</oauth2-provider:clients>
 	</oauth2-provider:config>
+	<signature:config name="Signature" doc:name="Signature" />
 
-    <flow name="server" doc:name="server">
-        <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="9999" path="api" connector-ref="http-connector" doc:name="/api">
-            <not-filter> 
-                <wildcard-filter pattern="/favicon.ico"/> 
-            </not-filter>
-            <object-to-string-transformer/>
-            <oauth2-provider:validate/>
-        </http:inbound-endpoint>
-        <logger message="welcome!" level="INFO" doc:name="Logger"/>
-    </flow>
+	<flow name="getSignature" doc:name="getSignature">
+		<http:inbound-endpoint exchange-pattern="request-response"
+			host="localhost" port="7777" path="signature" connector-ref="http-connector"
+			doc:name=":8888/api">
+			<not-filter>
+				<wildcard-filter pattern="/favicon.ico" />
+			</not-filter>
+		</http:inbound-endpoint>
+		<logger level="INFO" doc:name="signature" />
+		<object-to-byte-array-transformer
+			doc:name="Object to Byte Array" />
+		<signature:sign config-ref="Signature" variable="signature"
+			doc:name="sign"
+			input-ref="#[message.inboundProperties['http.query.params'].path.getBytes()]">
+			<signature:jce-signer algorithm="HmacMD5"
+				key="1@s9bl&gt;1LOJ94z4" />
+		</signature:sign>
+		<set-payload value="#[flowVars.signature]" doc:name="signature" />
+		<logger level="INFO" message="#[flowVars.signature]" doc:name="Logger" />
+	</flow>
+
+	<flow name="server" doc:name="server">
+		<http:inbound-endpoint exchange-pattern="request-response"
+			host="localhost" port="9999" path="api" connector-ref="http-connector"
+			doc:name=":9999/api">
+			<object-to-string-transformer />
+		</http:inbound-endpoint>
+		<logger level="INFO" doc:name="Logger" />
+		<oauth2-provider:validate  config-ref="oauth2-provider" doc:name="validate" />
+        <set-property propertyName="http.status" value="403" doc:name="http.status = 403"/>
+		<signature:verify-signature config-ref="Signature"
+			using="JCE_SIGNER" input-ref="#[message.inboundProperties['http.request.path']]"
+			expectedSignature="#[message.inboundProperties.signature]" doc:name="verify">
+			<signature:jce-signer algorithm="HmacMD5"
+				key="1@s9bl&gt;1LOJ94z4" />
+		</signature:verify-signature>
+        <set-property propertyName="http.status" value="200" doc:name="http.status = 200"/>
+        <logger message="Welcome" level="INFO" doc:name="Logger"/>
+		<set-payload value="Welcome" doc:name="Welcome" />
+	</flow>
 
 </mule>
