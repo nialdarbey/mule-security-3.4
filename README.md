@@ -95,8 +95,8 @@ We invoke it like so:
 curl http://localhost:7777/signature?path=/api/demos
 ```
 
-Authentication using Token and Signature
-========================================
+Authentication and Authorisation using Token and Signature
+==========================================================
 
 Having at hand both the token and the signature generated above, the client can then request access to the service like so:
 
