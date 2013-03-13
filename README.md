@@ -90,6 +90,10 @@ Here follows a flow which will return the signature of the supplied path paramet
 		<logger level="INFO" message="#[flowVars.signature]" doc:name="Logger" />
 	</flow>
 ```
+We invoke it like so:
+```bash
+curl http://localhost:7777/signature?path=/api/demos
+```
 
 Authentication using Token and Signature
 ========================================
